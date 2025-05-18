@@ -2,6 +2,29 @@
 
 A modern eco-friendly marketplace with advanced features including multi-platform product search, AI-powered voice and image recognition, and integrated payment gateways.
 
+## Demo Video
+Check out our demo video to see EcoFinds in action:
+
+[![EcoFinds Demo](https://img.youtube.com/vi/iV4Wq-vGa7E/0.jpg)](https://youtu.be/iV4Wq-vGa7E)
+
+## Technologies Used
+
+- **Frontend Framework**: React 18 with TypeScript
+- **Build Tool**: Vite
+- **Styling**: TailwindCSS with animations
+- **UI Components**: Shadcn UI (based on Radix UI)
+- **State Management**: React Context API
+- **Data Fetching**: TanStack React Query
+- **Routing**: React Router DOM
+- **Form Handling**: React Hook Form with Zod validation
+- **Date Handling**: date-fns
+- **Payment Gateways**: Stripe and PayPal
+- **Charts**: Recharts
+- **Animations**: Framer Motion
+- **Toast Notifications**: Sonner
+- **Carousel**: Embla Carousel
+- **Blockchain Integration**: Custom Blockchain Context
+
 ## Features
 
 - **Multi-Platform Product Search**: Search across Amazon, Flipkart, Shopify, and more
@@ -9,6 +32,13 @@ A modern eco-friendly marketplace with advanced features including multi-platfor
 - **Payment Integrations**: Stripe and PayPal payment gateways
 - **Modern UI**: Attractive, responsive design with animations and hover effects
 - **Comprehensive Marketplace**: Full-featured e-commerce functionality
+- **User Authentication**: Login and signup functionality
+- **Product Management**: Add, edit, and manage product listings
+- **Shopping Cart**: Dynamic cart functionality with real-time updates
+- **Checkout Process**: Streamlined checkout with multiple payment options
+- **Order Management**: Track and manage orders
+- **User Profiles**: Personalized user profiles
+- **Responsive Design**: Works on mobile, tablet, and desktop devices
 
 ## API Integrations
 
@@ -56,6 +86,17 @@ For voice and image recognition:
 2. Get your API key
 3. Add it to the `.env` file
 
+## Project Structure
+
+- `src/components`: UI Components including Shadcn UI components
+- `src/pages`: All application pages (Home, Explore, Product Detail, etc.)
+- `src/context`: React Context providers for state management
+- `src/services`: API service integrations
+- `src/hooks`: Custom React hooks
+- `src/utils`: Utility functions
+- `src/types`: TypeScript type definitions
+- `src/lib`: Shared libraries and configurations
+
 ## Setup Instructions
 
 1. Clone the repository
@@ -74,6 +115,11 @@ npm install
 4. Start the development server
 ```bash
 npm run dev
+```
+
+5. Build for production
+```bash
+npm run build
 ```
 
 ## Environment Variables
@@ -117,6 +163,20 @@ VITE_APP_ENABLE_MOCK_SERVICES=true
 ## Development Mode
 
 For development without actual API keys, the application uses mock services that return simulated data. This is controlled by the `VITE_APP_ENABLE_MOCK_SERVICES` environment variable.
+
+## Implemented Pages
+
+- **Home**: Landing page with featured products and categories
+- **Explore**: Browse and filter products by various criteria
+- **Product Detail**: View detailed product information
+- **Cart**: Review items in shopping cart
+- **Checkout**: Complete purchase with various payment methods
+- **AI Features**: Voice and image recognition for product search
+- **Login/Signup**: User authentication
+- **Profile**: User profile management
+- **Sell Product**: Create and publish product listings
+- **My Listings**: Manage your product listings
+- **Orders**: Track and manage orders
 
 ## License
 
