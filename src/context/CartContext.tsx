@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useState, ReactNode, useEffect } from 'react';
 import { CartItem, Product } from '../types';
 import { toast } from 'sonner';
@@ -11,6 +10,7 @@ interface CartContextType {
   clearCart: () => void;
   totalItems: number;
   totalPrice: number;
+  total: number; // Alias for totalPrice for backward compatibility
 }
 
 const CartContext = createContext<CartContextType>({
@@ -20,7 +20,8 @@ const CartContext = createContext<CartContextType>({
   updateQuantity: () => {},
   clearCart: () => {},
   totalItems: 0,
-  totalPrice: 0
+  totalPrice: 0,
+  total: 0
 });
 
 export const useCart = () => useContext(CartContext);
@@ -96,7 +97,8 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
       updateQuantity,
       clearCart,
       totalItems,
-      totalPrice
+      totalPrice,
+      total: totalPrice
     }}>
       {children}
     </CartContext.Provider>

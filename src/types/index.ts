@@ -32,6 +32,7 @@ export interface Product {
   title: string;
   description: string;
   price: number;
+  originalPrice?: number; // Original price before discount
   images: string[];
   category: ProductCategory;
   condition: ProductCondition;
@@ -45,6 +46,7 @@ export interface Product {
   likes: number; // Number of times this product has been liked
   name: string; // Adding name property to Product interface that maps to title
   image: string; // Adding image property that maps to the first image in images array
+  rating?: number; // Product rating (0-5)
 }
 
 export interface CartItem {

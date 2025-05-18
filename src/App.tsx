@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -16,6 +15,9 @@ import Profile from "./pages/Profile";
 import Explore from "./pages/Explore";
 import ProductDetail from "./pages/ProductDetail";
 import Cart from "./pages/Cart";
+import Checkout from "./pages/Checkout";
+import ThankYou from "./pages/ThankYou";
+import AIFeatures from "./pages/AIFeatures";
 import SellProduct from "./pages/SellProduct";
 import MyListings from "./pages/MyListings";
 import Orders from "./pages/Orders";
@@ -39,6 +41,9 @@ const App = () => (
                     <Route path="explore" element={<Explore />} />
                     <Route path="product/:id" element={<ProductDetail />} />
                     <Route path="cart" element={<Cart />} />
+                    <Route path="checkout" element={<Checkout />} />
+                    <Route path="thank-you" element={<ThankYou />} />
+                    <Route path="ai-features" element={<AIFeatures />} />
                     <Route path="profile" element={<Profile />} />
                     <Route path="sell" element={<SellProduct />} />
                     <Route path="my-listings" element={<MyListings />} />
