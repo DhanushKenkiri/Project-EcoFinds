@@ -101,7 +101,7 @@ For voice and image recognition:
 
 1. Clone the repository
 ```bash
-git clone https://github.com/dhanushkenkir/ecofinds.git
+git clone https://github.com/dhanushkenkiri/ecofinds.git
 cd ecofinds
 ```
 
