@@ -1,49 +1,41 @@
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 240 10% 3.9%;
+    /* Main theme colors */
+    --background: 220 13% 18%;
+    --foreground: 210 40% 98%;
 
-    --card: 0 0% 100%;
-    --card-foreground: 240 10% 3.9%;
+    --card: 222 13% 22%;
+    --card-foreground: 210 40% 98%;
 
-    --popover: 0 0% 100%;
-    --popover-foreground: 240 10% 3.9%;
+    --popover: 222 13% 22%;
+    --popover-foreground: 210 40% 98%;
 
-    --primary: 142 76% 36%;
+    --primary: 201 96% 52%;
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 240 4.8% 95.9%;
-    --secondary-foreground: 240 5.9% 10%;
+    --secondary: 285 70% 62%;
+    --secondary-foreground: 0 0% 100%;
 
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
+    --muted: 217 13% 26%;
+    --muted-foreground: 215 20% 65%;
 
-    --accent: 24 94% 53%;
+    --accent: 38 92% 50%;
     --accent-foreground: 0 0% 100%;
 
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 210 40% 98%;
 
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 142 76% 36%;
+    --border: 214.3 31.8% 30.4%;
+    --input: 214.3 31.8% 30.4%;
+    --ring: 201 96% 52%;
 
     --radius: 0.5rem;
 
-    --sidebar-background: 0 0% 98%;
-    --sidebar-foreground: 240 5.3% 26.1%;
-    --sidebar-primary: 142 76% 36%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 240 4.8% 95.9%;
-    --sidebar-accent-foreground: 240 5.9% 10%;
-    --sidebar-border: 220 13% 91%;
-    --sidebar-ring: 142 76% 36%;
-    
+    /* Collection colors */
     --eco: #26a042;
     --eco-light: #4dc061;
     --eco-dark: #1c7830;
@@ -60,151 +52,179 @@
   }
 }
 
-.card-hover {
-  @apply transition-all duration-300 hover:shadow-lg hover:-translate-y-1;
+/* Scrollbars */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
 }
 
-.eco-gradient {
-  @apply bg-gradient-to-br from-eco-light to-eco-dark;
+::-webkit-scrollbar-track {
+  @apply bg-muted/30 rounded-full;
 }
 
+::-webkit-scrollbar-thumb {
+  @apply bg-primary/50 rounded-full hover:bg-primary transition-colors;
+}
+
+/* Card animations and effects */
+.panini-card {
+  @apply relative overflow-hidden bg-card rounded-xl shadow-lg transition-all duration-300;
+}
+
+.panini-card:hover {
+  @apply shadow-xl transform -translate-y-1;
+}
+
+.panini-card-image {
+  @apply aspect-square w-full object-cover transition-transform duration-500 ease-out;
+}
+
+.panini-card:hover .panini-card-image {
+  @apply scale-105;
+}
+
+.panini-card-shine {
+  @apply absolute inset-0 bg-gradient-to-tr from-white/0 via-white/20 to-white/0 opacity-0 transition-opacity duration-300 pointer-events-none;
+  transform: rotate(25deg) translateY(-60%) scale(1.5);
+}
+
+.panini-card:hover .panini-card-shine {
+  @apply opacity-100;
+}
+
+.panini-badge {
+  @apply absolute top-3 bg-black/60 backdrop-blur-sm text-white text-xs font-bold py-1 px-2 rounded-full shadow-sm;
+}
+
+.panini-badge-rarity-common {
+  @apply bg-gray-600/90 text-white;
+}
+
+.panini-badge-rarity-uncommon {
+  @apply bg-green-600/90 text-white;
+}
+
+.panini-badge-rarity-rare {
+  @apply bg-blue-600/90 text-white;
+}
+
+.panini-badge-rarity-epic {
+  @apply bg-purple-600/90 text-white;
+}
+
+.panini-badge-rarity-legendary {
+  @apply bg-orange-500/90 text-white;
+}
+
+.panini-badge-verified {
+  @apply bg-primary/90 text-white;
+}
+
+/* Main navigation */
+.marketplace-nav {
+  @apply flex items-center gap-6 px-6 h-16 bg-card border-b border-border;
+}
+
+.marketplace-nav-item {
+  @apply relative text-sm font-semibold uppercase tracking-wider text-muted-foreground hover:text-foreground transition-colors py-2;
+}
+
+.marketplace-nav-item.active {
+  @apply text-primary;
+}
+
+.marketplace-nav-item.active::after {
+  content: '';
+  @apply absolute bottom-0 left-0 w-full h-0.5 bg-primary rounded-t-full;
+}
+
+/* Sport/category tabs */
+.category-tabs {
+  @apply flex overflow-x-auto gap-1 py-3 px-2;
+}
+
+.category-tab {
+  @apply flex items-center gap-2 py-2 px-4 rounded-full text-sm font-medium bg-muted/50 text-muted-foreground whitespace-nowrap transition-all duration-200 hover:bg-muted;
+}
+
+.category-tab.active {
+  @apply bg-primary text-white;
+}
+
+/* Featured banner */
+.featured-banner {
+  @apply relative h-96 overflow-hidden;
+}
+
+.featured-banner-content {
+  @apply absolute inset-0 flex items-center justify-center z-10;
+}
+
+.featured-banner-gradient {
+  @apply absolute inset-0 bg-gradient-to-t from-background via-background/70 to-transparent z-0;
+}
+
+/* Card grid */
+.card-grid {
+  @apply grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-5;
+}
+
+/* Filters */
+.filter-section {
+  @apply flex p-4 rounded-lg bg-card mb-5;
+}
+
+/* Stats bars */
+.stat-bar {
+  @apply h-1 bg-muted rounded-full overflow-hidden;
+}
+
+.stat-bar-fill {
+  @apply h-full bg-primary;
+}
+
+/* Buttons */
 .btn-primary {
-  @apply bg-[#26a042] text-white hover:bg-[#1c7830] transition-colors;
+  @apply bg-primary text-primary-foreground hover:bg-primary/90 transition-colors;
 }
 
 .btn-secondary {
-  @apply bg-[#f97316] text-white hover:bg-[#ea580c] transition-colors;
+  @apply bg-secondary text-secondary-foreground hover:bg-secondary/90 transition-colors;
 }
 
-.category-chip {
-  @apply px-3 py-1 text-sm rounded-full border border-gray-300 hover:border-[#26a042] hover:bg-[#e6f5e9] cursor-pointer transition-colors;
+.btn-accent {
+  @apply bg-accent text-accent-foreground hover:bg-accent/90 transition-colors;
 }
 
-.category-chip.active {
-  @apply bg-[#26a042] text-white border-[#26a042];
+.btn-outline {
+  @apply border border-border bg-transparent hover:bg-muted transition-colors;
 }
 
-.product-card {
-  @apply bg-white rounded-lg overflow-hidden shadow-md hover:shadow-xl transition-all duration-300;
+/* Dropdown menus */
+.dropdown-menu {
+  @apply absolute right-0 mt-2 w-56 rounded-md shadow-lg bg-card border border-border overflow-hidden z-10;
 }
 
-.product-card-image {
-  @apply w-full aspect-square object-cover;
+.dropdown-item {
+  @apply flex items-center w-full px-4 py-2 text-sm text-foreground hover:bg-muted cursor-pointer transition-colors;
 }
 
-.product-card-content {
-  @apply p-4;
+/* Banners with gradients */
+.banner-gradient-primary {
+  @apply bg-gradient-to-r from-primary to-primary/60;
 }
 
-.product-card-title {
-  @apply font-semibold text-lg mb-1 truncate;
+.banner-gradient-secondary {
+  @apply bg-gradient-to-r from-secondary to-secondary/70;
 }
 
-.product-card-price {
-  @apply text-[#26a042] font-bold;
+.banner-gradient-accent {
+  @apply bg-gradient-to-r from-accent to-accent/70;
 }
 
-.product-badge {
-  @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium;
-}
-
-.badge-verified {
-  @apply bg-[#e6f5e9] text-[#26a042];
-}
-
-.badge-rarity {
-  @apply bg-[#f1effe] text-[#7e69ab];
-}
-
-.badge-category {
-  @apply bg-[#f3f4f6] text-[#4b5563];
-}
-
-.header-nav-link {
-  @apply font-medium uppercase text-gray-700 hover:text-[#26a042] transition-colors;
-}
-
-.header-nav-link.active {
-  @apply text-[#26a042];
-}
-
-.marketplace-header {
-  @apply bg-white border-b border-gray-200 shadow-sm sticky top-0 z-10;
-}
-
-.panini-style-layout {
-  @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
-}
-
-.navbar-link {
-  @apply uppercase font-bold tracking-wider px-4 py-2 text-gray-800 hover:text-[#26a042] transition-colors;
-}
-
-.navbar-link.active {
-  @apply text-[#26a042] border-b-2 border-[#26a042];
-}
-
-.main-tabs {
-  @apply flex border-b border-gray-200 mb-6;
-}
-
-.main-tab {
-  @apply uppercase font-bold px-4 py-2 cursor-pointer border-b-2 border-transparent hover:border-[#26a042] hover:text-[#26a042];
-}
-
-.main-tab.active {
-  @apply border-[#26a042] text-[#26a042];
-}
-
-.verified-icon {
-  @apply text-[#26a042];
-}
-
-.rarity-badge {
-  @apply uppercase font-bold text-xs px-2 py-1 rounded;
-}
-
-.rarity-common {
-  @apply bg-gray-200 text-gray-800;
-}
-
-.rarity-uncommon {
-  @apply bg-[#4dc061] text-white;
-}
-
-.rarity-rare {
-  @apply bg-[#7e69ab] text-white;
-}
-
-.rarity-epic {
-  @apply bg-[#f97316] text-white;
-}
-
-.rarity-legendary {
-  @apply bg-[#f59e0b] text-white;
-}
-
-/* Filter sidebar styles */
-.filter-sidebar {
-  @apply bg-gray-50 p-4 rounded-lg;
-}
-
-.filter-heading {
-  @apply font-bold text-sm text-gray-500 uppercase mb-2;
-}
-
-.filter-option {
-  @apply flex items-center space-x-2 py-2 cursor-pointer hover:text-[#26a042];
-}
-
-.quick-buy-button {
-  @apply w-full bg-[#f97316] text-white font-bold py-2 rounded hover:bg-[#ea580c] transition-colors;
-}
-
-.make-offer-button {
-  @apply w-full border-2 border-gray-800 text-gray-800 font-bold py-2 rounded hover:bg-gray-100 transition-colors;
-}
-
-.blockchain-badge {
-  @apply flex items-center gap-2 bg-gray-100 px-3 py-1 rounded-full text-xs;
+/* Media queries */
+@media (max-width: 768px) {
+  .marketplace-nav {
+    @apply px-3;
+  }
 }

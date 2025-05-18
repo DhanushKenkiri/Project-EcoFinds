@@ -1,13 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { useLocation, useSearchParams } from 'react-router-dom';
+import { useSearchParams } from 'react-router-dom';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import ProductCard from '@/components/ProductCard';
-import CategoryFilter from '@/components/CategoryFilter';
-import EmptyState from '@/components/EmptyState';
-import { useProducts } from '@/context/ProductContext';
-import { ProductCategory } from '@/types';
-import { Search, Filter, Grid, TrendingUp, ChevronDown, ShoppingCart, Heart, Clock, LayoutList } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
+import { Slider } from '@/components/ui/slider';
 import {
   Select,
   SelectContent,
@@ -15,159 +11,169 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import ProductCard from '@/components/ProductCard';
+import EmptyState from '@/components/EmptyState';
+import { useProducts } from '@/context/ProductContext';
+import { ProductCategory, ProductCondition } from '@/types';
+import { Search, SlidersHorizontal, X, ChevronDown, Flame, Sparkles, Filter, ArrowUpDown } from 'lucide-react';
+import { motion } from 'framer-motion';
 
+// Sort options
 const sortOptions = [
   { label: 'Newest', value: 'newest' },
   { label: 'Price: Low to High', value: 'price_asc' },
   { label: 'Price: High to Low', value: 'price_desc' },
-  { label: 'Verified First', value: 'verified' },
+  { label: 'Most Viewed', value: 'views' },
+  { label: 'Most Popular', value: 'popular' },
 ];
 
 const Explore = () => {
-  const location = useLocation();
-  const { products, filterProductsByCategory, searchProducts } = useProducts();
+  const { products } = useProducts();
   const [searchParams, setSearchParams] = useSearchParams();
   
-  const initialSearchQuery = searchParams.get('search') || '';
-  const [searchQuery, setSearchQuery] = useState(initialSearchQuery);
-  const [selectedCategory, setSelectedCategory] = useState<ProductCategory | 'all'>('all');
-  const [sortBy, setSortBy] = useState('newest');
-  const [displayedProducts, setDisplayedProducts] = useState(products);
-  const [filtersOpen, setFiltersOpen] = useState(false);
+  // State for filters
+  const [searchQuery, setSearchQuery] = useState(searchParams.get('search') || '');
+  const [selectedCategory, setSelectedCategory] = useState<ProductCategory | 'all'>(
+    (searchParams.get('category') as ProductCategory) || 'all'
+  );
+  const [selectedCondition, setSelectedCondition] = useState<ProductCondition | 'all'>(
+    (searchParams.get('condition') as ProductCondition) || 'all'
+  );
+  const [priceRange, setPriceRange] = useState<[number, number]>([0, 1000]);
+  const [verifiedOnly, setVerifiedOnly] = useState(searchParams.get('verified') === 'true');
+  const [sortBy, setSortBy] = useState(searchParams.get('sort') || 'newest');
+  const [isFiltersVisible, setIsFiltersVisible] = useState(false);
+  const [viewType, setViewType] = useState('grid');
   const [activeTab, setActiveTab] = useState('all');
-  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
+  
+  // Apply filters and sort
+  const filteredProducts = products
+    .filter(product => {
+      // Search query
+      if (searchQuery && !product.title.toLowerCase().includes(searchQuery.toLowerCase()) && 
+          !product.description.toLowerCase().includes(searchQuery.toLowerCase())) {
+        return false;
+      }
+      
+      // Category filter
+      if (selectedCategory !== 'all' && product.category !== selectedCategory) {
+        return false;
+      }
+      
+      // Condition filter
+      if (selectedCondition !== 'all' && product.condition !== selectedCondition) {
+        return false;
+      }
+      
+      // Price range filter
+      if (product.price < priceRange[0] || product.price > priceRange[1]) {
+        return false;
+      }
+      
+      // Verified filter
+      if (verifiedOnly && !product.verified) {
+        return false;
+      }
+      
+      return true;
+    })
+    .sort((a, b) => {
+      switch (sortBy) {
+        case 'price_asc':
+          return a.price - b.price;
+        case 'price_desc':
+          return b.price - a.price;
+        case 'views':
+          return b.views - a.views;
+        case 'popular':
+          return (b.views + (b.likes || 0)) - (a.views + (a.likes || 0));
+        case 'newest':
+        default:
+          return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+      }
+    });
 
-  const tabs = [
-    { id: 'all', label: 'All', icon: <Grid className="h-4 w-4" /> },
-    { id: 'trending', label: 'Trending', icon: <TrendingUp className="h-4 w-4" /> },
-    { id: 'new', label: 'Newest', icon: <Clock className="h-4 w-4" /> },
-    { id: 'verified', label: 'Verified', icon: <Heart className="h-4 w-4" /> },
-    { id: 'bestselling', label: 'Best Selling', icon: <ShoppingCart className="h-4 w-4" /> },
+  // Category tabs for horizontal scrolling
+  const categoryTabs = [
+    { id: 'all', name: 'All Categories' },
+    ...Object.values(ProductCategory).map(cat => ({ id: cat, name: cat }))
   ];
   
+  // Update URL when filters change
   useEffect(() => {
-    // Apply search if query exists
-    let filtered = products;
+    const params: Record<string, string> = {};
     
-    if (searchQuery) {
-      filtered = searchProducts(searchQuery);
-    }
+    if (searchQuery) params.search = searchQuery;
+    if (selectedCategory !== 'all') params.category = selectedCategory;
+    if (selectedCondition !== 'all') params.condition = selectedCondition;
+    if (verifiedOnly) params.verified = 'true';
+    if (sortBy !== 'newest') params.sort = sortBy;
     
-    // Apply category filter
-    if (selectedCategory !== 'all') {
-      filtered = filtered.filter(product => product.category === selectedCategory);
-    }
-
-    // Apply tab filter
-    if (activeTab === 'trending') {
-      filtered = [...filtered].sort((a, b) => b.views - a.views);
-    } else if (activeTab === 'new') {
-      filtered = [...filtered].sort((a, b) => 
-        new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-      );
-    } else if (activeTab === 'verified') {
-      filtered = filtered.filter(product => product.verified);
-    } else if (activeTab === 'bestselling') {
-      // Placeholder for bestselling logic - could be based on sales data
-      filtered = [...filtered].sort(() => Math.random() - 0.5);
-    }
-    
-    // Apply sorting
-    switch (sortBy) {
-      case 'newest':
-        filtered = [...filtered].sort((a, b) => 
-          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-        );
-        break;
-      case 'price_asc':
-        filtered = [...filtered].sort((a, b) => a.price - b.price);
-        break;
-      case 'price_desc':
-        filtered = [...filtered].sort((a, b) => b.price - a.price);
-        break;
-      case 'verified':
-        filtered = [...filtered].sort((a, b) => 
-          Number(b.verified) - Number(a.verified)
-        );
-        break;
-      default:
-        break;
-    }
-    
-    setDisplayedProducts(filtered);
-  }, [products, searchQuery, selectedCategory, sortBy, activeTab]);
-  
-  // Set initial search from URL params
-  useEffect(() => {
-    if (initialSearchQuery) {
-      setSearchQuery(initialSearchQuery);
-    }
-  }, [initialSearchQuery]);
+    setSearchParams(params);
+  }, [searchQuery, selectedCategory, selectedCondition, verifiedOnly, sortBy, setSearchParams]);
   
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
-    setSearchParams({ search: searchQuery });
+    // URL will be updated by the effect
   };
   
+  const clearFilters = () => {
+    setSearchQuery('');
+    setSelectedCategory('all');
+    setSelectedCondition('all');
+    setPriceRange([0, 1000]);
+    setVerifiedOnly(false);
+  };
+  
+  // Handle slider value change
+  const handlePriceRangeChange = (value: number[]) => {
+    setPriceRange(value as [number, number]);
+  };
+
   return (
-    <div className="bg-white min-h-screen">
-      {/* Modern Marketplace Header Tabs */}
-      <div className="border-b border-gray-200 bg-gray-100">
-        <div className="container mx-auto px-4">
-          <div className="marketplace-tabs overflow-x-auto">
-            {tabs.map((tab) => (
-              <button
-                key={tab.id}
-                className={`marketplace-tab flex items-center gap-2 ${activeTab === tab.id ? 'active' : ''}`}
-                onClick={() => setActiveTab(tab.id)}
-              >
-                {tab.icon}
-                {tab.label}
-              </button>
-            ))}
-          </div>
+    <div className="bg-background min-h-screen pb-16">
+      {/* Tab Navigation */}
+      <div className="marketplace-nav sticky top-0 z-30">
+        <div className="category-tabs overflow-x-auto gap-1 py-3 px-2">
+          {categoryTabs.map((tab) => (
+            <button
+              key={tab.id}
+              className={`category-tab ${selectedCategory === tab.id ? 'active' : ''}`}
+              onClick={() => setSelectedCategory(tab.id === 'all' ? 'all' : tab.id as ProductCategory)}
+            >
+              {tab.name}
+            </button>
+          ))}
         </div>
       </div>
       
-      <div className="container mx-auto px-4 py-6">
-        {/* Search and Filters */}
-        <div className="flex flex-col sm:flex-row gap-4 items-center mb-6">
-          <form onSubmit={handleSearch} className="flex w-full">
-            <Input
-              type="text"
-              placeholder="Search products..."
-              className="rounded-r-none border-r-0"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-            />
-            <Button type="submit" className="rounded-l-none bg-blue-600 hover:bg-blue-700">
-              <Search className="h-4 w-4 mr-2" /> Search
-            </Button>
+      <div className="container mx-auto px-4 py-8">
+        {/* Search and Filters Section */}
+        <div className="filter-section flex flex-col md:flex-row items-center gap-4 md:gap-6">
+          <form onSubmit={handleSearch} className="flex flex-1 w-full">
+            <div className="relative flex-1">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <Input 
+                type="text" 
+                placeholder="Search items..." 
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="pl-10 bg-background"
+              />
+            </div>
+            <Button type="submit" className="ml-2">Search</Button>
           </form>
           
-          <div className="hidden md:flex items-center gap-3 ml-auto">
-            <Button
-              variant="ghost"
-              size="icon"
-              className={`${viewMode === 'grid' ? 'bg-gray-100' : ''}`}
-              onClick={() => setViewMode('grid')}
-            >
-              <Grid className="h-5 w-5" />
-            </Button>
-            <Button
-              variant="ghost"
-              size="icon"
-              className={`${viewMode === 'list' ? 'bg-gray-100' : ''}`}
-              onClick={() => setViewMode('list')}
-            >
-              <LayoutList className="h-5 w-5" />
-            </Button>
+          <div className="flex items-center gap-3">
             <Select
               value={sortBy}
               onValueChange={setSortBy}
             >
-              <SelectTrigger className="w-[180px]">
-                <SelectValue placeholder="Sort By" />
+              <SelectTrigger className="w-[180px] bg-background">
+                <div className="flex items-center gap-2">
+                  <ArrowUpDown className="h-4 w-4" />
+                  <span>Sort By</span>
+                </div>
               </SelectTrigger>
               <SelectContent>
                 {sortOptions.map((option) => (
@@ -177,117 +183,137 @@ const Explore = () => {
                 ))}
               </SelectContent>
             </Select>
+            
             <Button 
               variant="outline" 
-              className="flex items-center gap-2"
-              onClick={() => setFiltersOpen(!filtersOpen)}
+              size="icon"
+              onClick={() => setIsFiltersVisible(!isFiltersVisible)}
+              className="relative"
             >
               <Filter className="h-4 w-4" />
-              Filters
-              <ChevronDown className={`h-4 w-4 transition-transform ${filtersOpen ? 'rotate-180' : ''}`} />
+              {Object.values([
+                selectedCondition !== 'all',
+                verifiedOnly,
+                priceRange[0] > 0 || priceRange[1] < 1000
+              ]).some(Boolean) && (
+                <span className="absolute -top-1 -right-1 w-2 h-2 bg-primary rounded-full" />
+              )}
             </Button>
           </div>
         </div>
         
-        {/* Mobile sort & filter buttons */}
-        <div className="flex md:hidden gap-2 mb-6">
-          <Select
-            value={sortBy}
-            onValueChange={setSortBy}
+        {/* Advanced Filters */}
+        {isFiltersVisible && (
+          <motion.div 
+            className="bg-card rounded-lg p-5 mt-4 mb-6 border border-border"
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: 'auto' }}
+            exit={{ opacity: 0, height: 0 }}
+            transition={{ duration: 0.2 }}
           >
-            <SelectTrigger className="flex-1">
-              <SelectValue placeholder="Sort By" />
-            </SelectTrigger>
-            <SelectContent>
-              {sortOptions.map((option) => (
-                <SelectItem key={option.value} value={option.value}>
-                  {option.label}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-          <Button 
-            variant="outline" 
-            className="flex items-center gap-2"
-            onClick={() => setFiltersOpen(!filtersOpen)}
-          >
-            <Filter className="h-4 w-4" />
-            Filters
-          </Button>
-        </div>
-        
-        {/* Filters Section */}
-        {filtersOpen && (
-          <div className="bg-gray-50 p-4 rounded-lg mb-6">
-            <h3 className="font-medium mb-3">Category Filter</h3>
-            <CategoryFilter
-              selectedCategory={selectedCategory}
-              onSelectCategory={setSelectedCategory}
-              className="category-filters"
-            />
-          </div>
-        )}
-        
-        {/* Results Summary */}
-        <div className="mb-6">
-          <h2 className="text-2xl font-bold mb-1">
-            {searchQuery ? `Results for "${searchQuery}"` : 'All Products'}
-          </h2>
-          <p className="text-gray-500">Showing {displayedProducts.length} items</p>
-        </div>
-
-        {/* Advertisement Banner */}
-        <div className="ad-banner mb-6">
-          <div className="bg-gradient-to-r from-blue-600 to-indigo-600 rounded-lg overflow-hidden">
-            <div className="flex flex-col md:flex-row items-center">
-              <div className="md:w-2/3 p-6 text-white">
-                <h2 className="text-xl font-bold mb-2">Special Offer</h2>
-                <p className="mb-4">Get free shipping on all verified products until the end of the month!</p>
-                <Button size="sm" className="bg-white text-blue-600 hover:bg-gray-100">
-                  Shop Now
-                </Button>
+            <div className="flex justify-between items-center mb-4">
+              <h3 className="text-lg font-semibold">Advanced Filters</h3>
+              <Button variant="ghost" size="sm" onClick={clearFilters} className="text-xs">
+                Clear Filters
+              </Button>
+            </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div>
+                <label className="block text-sm font-medium mb-2">Condition</label>
+                <Select
+                  value={selectedCondition}
+                  onValueChange={(value) => setSelectedCondition(value as ProductCondition | 'all')}
+                >
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Select condition" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">Any Condition</SelectItem>
+                    {Object.values(ProductCondition).map((condition) => (
+                      <SelectItem key={condition} value={condition}>
+                        {condition}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
-              <div className="md:w-1/3 p-6">
-                <img 
-                  src="/banner-offer.jpg" 
-                  alt="Special Offer" 
-                  className="w-full h-auto rounded-lg"
-                  onError={(e) => {(e.target as HTMLImageElement).src = 'https://via.placeholder.com/400x200'}}
+              
+              <div>
+                <label className="block text-sm font-medium mb-2">Price Range: ${priceRange[0]} - ${priceRange[1]}</label>
+                <Slider
+                  min={0}
+                  max={1000}
+                  step={10}
+                  value={priceRange}
+                  onValueChange={handlePriceRangeChange}
+                  className="py-4"
                 />
               </div>
+              
+              <div className="flex items-center">
+                <label className="flex items-center cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={verifiedOnly}
+                    onChange={(e) => setVerifiedOnly(e.target.checked)}
+                    className="h-5 w-5 rounded border-gray-300 text-primary focus:ring-primary"
+                  />
+                  <span className="ml-2 flex items-center">
+                    <Sparkles className="h-4 w-4 text-primary mr-1" />
+                    Verified Only
+                  </span>
+                </label>
+              </div>
             </div>
+          </motion.div>
+        )}
+        
+        {/* Results Count */}
+        <div className="flex justify-between items-center mb-6 mt-8">
+          <p className="text-muted-foreground">
+            {filteredProducts.length} {filteredProducts.length === 1 ? 'item' : 'items'} found
+          </p>
+          
+          <div className="flex items-center gap-2">
+            {searchQuery && (
+              <Badge 
+                className="flex items-center gap-1 bg-primary/20 text-primary hover:bg-primary/30 cursor-pointer"
+                onClick={() => setSearchQuery('')}
+              >
+                Search: {searchQuery}
+                <X className="h-3 w-3" />
+              </Badge>
+            )}
+            
+            {selectedCategory !== 'all' && (
+              <Badge
+                className="flex items-center gap-1 bg-secondary/20 text-secondary hover:bg-secondary/30 cursor-pointer"
+                onClick={() => setSelectedCategory('all')}
+              >
+                {selectedCategory}
+                <X className="h-3 w-3" />
+              </Badge>
+            )}
           </div>
         </div>
         
         {/* Products Grid */}
-        {displayedProducts.length > 0 ? (
-          <div className={viewMode === 'grid' 
-            ? "grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6"
-            : "flex flex-col gap-4"
-          }>
-            {displayedProducts.map(product => (
-              <div key={product.id} className={viewMode === 'list' ? "w-full" : ""}>
-                <ProductCard 
-                  key={product.id} 
-                  product={product} 
-                  className={viewMode === 'list' ? "!flex flex-row h-40" : ""} 
-                />
-              </div>
+        {filteredProducts.length > 0 ? (
+          <div className="card-grid">
+            {filteredProducts.map((product) => (
+              <ProductCard key={product.id} product={product} />
             ))}
           </div>
         ) : (
-          <EmptyState 
-            icon={
-              <Search className="h-10 w-10 text-muted-foreground" />
-            }
+          <EmptyState
             title="No products found"
-            description="Try changing your search query or category filter."
-            actionLabel="Clear Filters"
-            actionOnClick={() => {
-              setSearchQuery('');
-              setSelectedCategory('all');
-              setSearchParams({});
-            }}
+            description="Try changing your search criteria or check back later for new items."
+            action={
+              <Button onClick={clearFilters}>
+                Clear filters
+              </Button>
+            }
           />
         )}
       </div>

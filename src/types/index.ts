@@ -1,4 +1,3 @@
-
 export interface User {
   id: string;
   username: string;
@@ -43,6 +42,7 @@ export interface Product {
   tokenId?: string; // Blockchain token ID if applicable
   verified: boolean;
   views: number; // Adding views property to Product interface
+  likes: number; // Number of times this product has been liked
   name: string; // Adding name property to Product interface that maps to title
   image: string; // Adding image property that maps to the first image in images array
 }
