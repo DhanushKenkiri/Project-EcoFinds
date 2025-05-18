@@ -7,6 +7,11 @@ Check out our demo video to see EcoFinds in action:
 
 [![EcoFinds Demo](https://img.youtube.com/vi/YQ9eeEsboYQ/0.jpg)](https://youtu.be/YQ9eeEsboYQ)
 
+### Mobile Experience Demo
+See how EcoFinds works on mobile devices:
+
+[![EcoFinds Mobile Demo](https://img.youtube.com/vi/RIXBnVtLcwQ/0.jpg)](https://youtu.be/RIXBnVtLcwQ)
+
 ## Technologies Used
 
 - **Frontend Framework**: React 18 with TypeScript
