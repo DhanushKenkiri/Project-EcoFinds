@@ -7,6 +7,7 @@ import { ShoppingCart, Check, Heart, Eye, Sparkles, ArrowRight, Star, Clock } fr
 import { Product } from '@/types';
 import { useCart } from '@/context/CartContext';
 import { motion, AnimatePresence } from 'framer-motion';
+import { getProductImage, getCategoryImage } from '@/utils/productImages';
 
 interface ProductCardProps {
   product: Product;
@@ -87,6 +88,15 @@ const ProductCard = ({ product, className = '', featured = false }: ProductCardP
   // Show overlay for touch devices or when hovered
   const showOverlay = isHovered || isTouchDevice;
   
+  // Get product image with fallback logic
+  const getImageSrc = () => {
+    if (product.images && product.images.length > 0 && product.images[0]) {
+      return product.images[0];
+    }
+    
+    return getProductImage(product.id, getCategoryImage(product.category || 'home'));
+  };
+  
   return (
     <Link to={`/product/${product.id}`}>
       <motion.div
@@ -102,7 +112,7 @@ const ProductCard = ({ product, className = '', featured = false }: ProductCardP
         <div className="relative overflow-hidden">
           <div className={`${featured ? 'aspect-[4/3]' : 'aspect-square'} overflow-hidden`}>
             <motion.img 
-              src={product.images?.[0] || "/placeholder.svg"} 
+              src={getImageSrc()} 
               alt={product.title}
               className="panini-card-image w-full h-full object-cover"
               animate={{ scale: isHovered && !isTouchDevice ? 1.08 : 1 }}

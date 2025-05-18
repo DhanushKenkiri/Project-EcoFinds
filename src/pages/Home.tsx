@@ -5,11 +5,12 @@ import { Input } from '@/components/ui/input';
 import ProductCard from '@/components/ProductCard';
 import { ProductCategory } from '@/types';
 import { useProducts } from '@/context/ProductContext';
-import { Search, Trophy, Flame as Fire, Zap, Sparkles, Gem, Star, Grid3X3, TriangleAlert, Eye, Users, PackageOpen, TagsIcon, Leaf, ShieldCheck, BadgePercent } from 'lucide-react';
+import { Search, Trophy, Flame as Fire, Zap, Sparkles, Gem, Star, Grid3X3, TriangleAlert, Eye, Users, PackageOpen, TagsIcon, Leaf, ShieldCheck, BadgePercent, TrendingUp, Clock } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { ArrowRight } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import EnhancedSearch from '@/components/EnhancedSearch';
+import { getCategoryImage } from '@/utils/productImages';
 
 const Home = () => {
   const { products, filterProductsByCategory } = useProducts();
@@ -22,7 +23,7 @@ const Home = () => {
   const featuredProducts = products
     .filter(product => product.verified)
     .sort((a, b) => b.views - a.views)
-    .slice(0, 1);
+    .slice(0, 4);
   
   const verifiedProducts = products
     .filter(product => product.verified)
@@ -73,12 +74,12 @@ const Home = () => {
         </div>
       </div>
       
-      {/* Hero Banner */}
+      {/* Hero Banner - Updated with eco-friendly image */}
       <section className="featured-banner mb-8">
         <div className="relative h-full w-full overflow-hidden">
           <img 
-            src="https://images.unsplash.com/photo-1591030434469-3d78c7b17820?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1470&q=80" 
-            alt="Featured Collection" 
+            src="https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?w=1470&q=80" 
+            alt="Eco-Friendly Marketplace" 
             className="w-full h-full object-cover"
           />
           <div className="featured-banner-gradient"></div>
@@ -89,6 +90,9 @@ const Home = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
           >
+            <Badge variant="outline" className="bg-white/10 backdrop-blur-md px-3 py-1 text-white mb-4">
+              <ShieldCheck className="h-4 w-4 mr-1" /> Eco-Friendly Marketplace
+            </Badge>
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-4 text-glow">
               Discover Eco-Friendly Treasures
             </h1>
@@ -102,7 +106,7 @@ const Home = () => {
                 className="btn-animated bg-primary hover:bg-primary/90 text-white shadow-lg shadow-primary/25"
                 onClick={() => navigate('/explore')}
               >
-                Explore Marketplace
+                <Search className="mr-2 h-4 w-4" /> Explore Marketplace
               </Button>
               <Button
                 size="lg"
@@ -112,6 +116,54 @@ const Home = () => {
               >
                 Sell Your Items
               </Button>
+            </div>
+          </motion.div>
+        </div>
+      </section>
+      
+      {/* Flash Sale Banner - New Section */}
+      <section className="mb-12">
+        <div className="container mx-auto px-4">
+          <motion.div 
+            className="flash-sale-banner bg-gradient-to-r from-rose-500 to-amber-500 rounded-xl overflow-hidden relative"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+          >
+            <div className="absolute top-0 right-0 bottom-0 w-1/2 bg-white/10 backdrop-blur-sm hidden md:block"></div>
+            <div className="grid grid-cols-1 md:grid-cols-2 p-6 md:p-8 items-center">
+              <div className="text-white z-10 pr-4">
+                <div className="flex items-center gap-2 mb-2">
+                  <BadgePercent className="h-5 w-5" />
+                  <h3 className="font-medium text-sm uppercase tracking-wide">Limited Time Offer</h3>
+                </div>
+                <h2 className="text-2xl md:text-3xl font-bold mb-3">Summer Eco Sale</h2>
+                <p className="mb-4 text-white/90">Up to 40% off on selected eco-friendly products this week only!</p>
+                <div className="flex gap-2 mb-6">
+                  <div className="bg-white/20 backdrop-blur-md p-2 rounded-md text-center min-w-[60px]">
+                    <span className="block text-xl font-bold">2</span>
+                    <span className="text-xs">Days</span>
+                  </div>
+                  <div className="bg-white/20 backdrop-blur-md p-2 rounded-md text-center min-w-[60px]">
+                    <span className="block text-xl font-bold">8</span>
+                    <span className="text-xs">Hours</span>
+                  </div>
+                  <div className="bg-white/20 backdrop-blur-md p-2 rounded-md text-center min-w-[60px]">
+                    <span className="block text-xl font-bold">45</span>
+                    <span className="text-xs">Mins</span>
+                  </div>
+                </div>
+                <Button className="bg-white text-rose-500 hover:bg-white/90">
+                  Shop Now <ArrowRight className="ml-2 h-4 w-4" />
+                </Button>
+              </div>
+              <div className="hidden md:flex justify-center items-center">
+                <img 
+                  src="/images/products/bamboo-toothbrush.jpg" 
+                  alt="Eco Sale" 
+                  className="max-h-[180px] object-cover rounded-lg shadow-lg transform rotate-3" 
+                />
+              </div>
             </div>
           </motion.div>
         </div>
@@ -172,13 +224,13 @@ const Home = () => {
       </motion.section>
       
       <div className="container px-4 mx-auto pb-16">
-        {/* Featured Collection */}
+        {/* Featured Collection - Updated to show more products in a grid */}
         {featuredProducts.length > 0 && (
           <section className="mb-16">
             <div className="flex items-center justify-between mb-6">
               <div className="flex items-center gap-2">
                 <Trophy className="h-5 w-5 text-primary" />
-                <h2 className="text-2xl font-bold text-glow">Featured Product</h2>
+                <h2 className="text-2xl font-bold text-glow">Featured Products</h2>
               </div>
               <Link to="/explore?featured=true" className="text-primary hover:text-primary/80 flex items-center gap-1">
                 View All <ArrowRight className="h-4 w-4" />
@@ -186,21 +238,23 @@ const Home = () => {
             </div>
             
             <motion.div 
-              className="mb-8"
+              className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5 }}
             >
-              <ProductCard 
-                product={featuredProducts[0]} 
-                featured={true} 
-                className="max-w-3xl mx-auto"
-              />
+              {featuredProducts.map(product => (
+                <ProductCard 
+                  key={product.id}
+                  product={product} 
+                  className=""
+                />
+              ))}
             </motion.div>
           </section>
         )}
         
-        {/* Category Showcase */}
+        {/* Category Showcase - Enhanced with images */}
         <section className="mb-16">
           <div className="flex items-center justify-between mb-6">
             <div className="flex items-center gap-2">
@@ -221,18 +275,72 @@ const Home = () => {
                   to={`/explore?category=${category}`} 
                   className="group bg-card hover:bg-card/80 rounded-xl overflow-hidden transition-all duration-300"
                 >
-                  <div className="aspect-square flex flex-col items-center justify-center p-6 text-center relative overflow-hidden">
-                    <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-accent/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                  <div className="aspect-square flex flex-col items-center justify-center text-center relative overflow-hidden">
+                    {/* Add category image background */}
+                    <div className="absolute inset-0">
+                      <img 
+                        src={getCategoryImage(category)}
+                        alt={category}
+                        className="w-full h-full object-cover opacity-50 group-hover:opacity-70 transition-opacity"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div>
+                    </div>
+                    
                     <motion.div
                       whileHover={{ scale: 1.1, rotate: 5 }}
-                      className="mb-3"
+                      className="mb-3 z-10"
                     >
                       {getCategoryIcon(category)}
                     </motion.div>
-                    <span className="mt-3 font-medium text-sm">{category}</span>
+                    <span className="mt-3 font-medium text-sm text-white z-10">{category}</span>
+                    <span className="absolute bottom-2 right-2 text-xs text-white/70">{products.filter(p => p.category === category).length} items</span>
                   </div>
                 </Link>
               </motion.div>
+            ))}
+          </div>
+        </section>
+        
+        {/* New Arrivals Section - New visual */}
+        <section className="mb-16">
+          <div className="flex items-center justify-between mb-6">
+            <div className="flex items-center gap-2">
+              <Clock className="h-5 w-5 text-primary" />
+              <h2 className="text-2xl font-bold text-glow">New Arrivals</h2>
+            </div>
+            <Link to="/explore?sort=newest" className="text-primary hover:text-primary/80 flex items-center gap-1">
+              View All <ArrowRight className="h-4 w-4" />
+            </Link>
+          </div>
+          
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+            {newArrivals.slice(0, 8).map((product, index) => (
+              <ProductCard 
+                key={product.id}
+                product={product} 
+              />
+            ))}
+          </div>
+        </section>
+
+        {/* Trending Products Section */}
+        <section className="mb-16">
+          <div className="flex items-center justify-between mb-6">
+            <div className="flex items-center gap-2">
+              <TrendingUp className="h-5 w-5 text-primary" />
+              <h2 className="text-2xl font-bold text-glow">Trending Now</h2>
+            </div>
+            <Link to="/explore?sort=trending" className="text-primary hover:text-primary/80 flex items-center gap-1">
+              View All <ArrowRight className="h-4 w-4" />
+            </Link>
+          </div>
+          
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+            {popularItems.map((product, index) => (
+              <ProductCard 
+                key={product.id}
+                product={product} 
+              />
             ))}
           </div>
         </section>
@@ -269,58 +377,6 @@ const Home = () => {
             </div>
           </div>
         </motion.section>
-        
-        {/* New Arrivals */}
-        <section className="mb-16">
-          <div className="flex items-center justify-between mb-6">
-            <div className="flex items-center gap-2">
-              <Zap className="h-5 w-5 text-primary" />
-              <h2 className="text-2xl font-bold text-glow">New Arrivals</h2>
-            </div>
-            <Link to="/explore?sort=newest" className="text-primary hover:text-primary/80 flex items-center gap-1">
-              View All <ArrowRight className="h-4 w-4" />
-            </Link>
-          </div>
-          
-          <div className="card-grid">
-            {newArrivals.slice(0, 6).map((product, index) => (
-              <motion.div
-                key={product.id}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: index * 0.1, duration: 0.4 }}
-              >
-                <ProductCard product={product} />
-              </motion.div>
-            ))}
-          </div>
-        </section>
-        
-        {/* Popular Items */}
-        <section className="mb-16">
-          <div className="flex items-center justify-between mb-6">
-            <div className="flex items-center gap-2">
-              <Fire className="h-5 w-5 text-primary" />
-              <h2 className="text-2xl font-bold text-glow">Popular Items</h2>
-            </div>
-            <Link to="/explore?sort=popular" className="text-primary hover:text-primary/80 flex items-center gap-1">
-              View All <ArrowRight className="h-4 w-4" />
-            </Link>
-          </div>
-          
-          <div className="card-grid">
-            {popularItems.slice(0, 6).map((product, index) => (
-              <motion.div
-                key={product.id}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: index * 0.1, duration: 0.4 }}
-              >
-                <ProductCard product={product} />
-              </motion.div>
-            ))}
-          </div>
-        </section>
         
         {/* Benefits Section */}
         <section className="mb-16">
@@ -394,6 +450,42 @@ const Home = () => {
             </div>
           </div>
         </motion.section>
+
+        {/* Add eco-impact highlight section */}
+        <section className="mb-16">
+          <div className="flex items-center justify-between mb-6">
+            <div className="flex items-center gap-2">
+              <Leaf className="h-5 w-5 text-green-500" />
+              <h2 className="text-2xl font-bold text-glow">Our Eco Impact</h2>
+            </div>
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="bg-card p-6 rounded-xl">
+              <div className="flex items-center justify-center h-16 w-16 bg-green-100 text-green-600 rounded-full mb-4 mx-auto">
+                <Leaf className="h-8 w-8" />
+              </div>
+              <h3 className="text-xl font-bold text-center mb-2">5,280 kg</h3>
+              <p className="text-center text-sm text-muted-foreground">CO₂ emissions saved through our marketplace this month</p>
+            </div>
+            
+            <div className="bg-card p-6 rounded-xl">
+              <div className="flex items-center justify-center h-16 w-16 bg-blue-100 text-blue-600 rounded-full mb-4 mx-auto">
+                <PackageOpen className="h-8 w-8" />
+              </div>
+              <h3 className="text-xl font-bold text-center mb-2">12,500+</h3>
+              <p className="text-center text-sm text-muted-foreground">Sustainable products exchanged between users</p>
+            </div>
+            
+            <div className="bg-card p-6 rounded-xl">
+              <div className="flex items-center justify-center h-16 w-16 bg-amber-100 text-amber-600 rounded-full mb-4 mx-auto">
+                <Users className="h-8 w-8" />
+              </div>
+              <h3 className="text-xl font-bold text-center mb-2">8,400+</h3>
+              <p className="text-center text-sm text-muted-foreground">Eco-conscious shoppers in our community</p>
+            </div>
+          </div>
+        </section>
       </div>
     </div>
   );
