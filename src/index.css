@@ -1,0 +1,210 @@
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 240 10% 3.9%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 240 10% 3.9%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 240 10% 3.9%;
+
+    --primary: 142 76% 36%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 240 4.8% 95.9%;
+    --secondary-foreground: 240 5.9% 10%;
+
+    --muted: 210 40% 96.1%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+
+    --accent: 24 94% 53%;
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 142 76% 36%;
+
+    --radius: 0.5rem;
+
+    --sidebar-background: 0 0% 98%;
+    --sidebar-foreground: 240 5.3% 26.1%;
+    --sidebar-primary: 142 76% 36%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 240 4.8% 95.9%;
+    --sidebar-accent-foreground: 240 5.9% 10%;
+    --sidebar-border: 220 13% 91%;
+    --sidebar-ring: 142 76% 36%;
+    
+    --eco: #26a042;
+    --eco-light: #4dc061;
+    --eco-dark: #1c7830;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+.card-hover {
+  @apply transition-all duration-300 hover:shadow-lg hover:-translate-y-1;
+}
+
+.eco-gradient {
+  @apply bg-gradient-to-br from-eco-light to-eco-dark;
+}
+
+.btn-primary {
+  @apply bg-[#26a042] text-white hover:bg-[#1c7830] transition-colors;
+}
+
+.btn-secondary {
+  @apply bg-[#f97316] text-white hover:bg-[#ea580c] transition-colors;
+}
+
+.category-chip {
+  @apply px-3 py-1 text-sm rounded-full border border-gray-300 hover:border-[#26a042] hover:bg-[#e6f5e9] cursor-pointer transition-colors;
+}
+
+.category-chip.active {
+  @apply bg-[#26a042] text-white border-[#26a042];
+}
+
+.product-card {
+  @apply bg-white rounded-lg overflow-hidden shadow-md hover:shadow-xl transition-all duration-300;
+}
+
+.product-card-image {
+  @apply w-full aspect-square object-cover;
+}
+
+.product-card-content {
+  @apply p-4;
+}
+
+.product-card-title {
+  @apply font-semibold text-lg mb-1 truncate;
+}
+
+.product-card-price {
+  @apply text-[#26a042] font-bold;
+}
+
+.product-badge {
+  @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium;
+}
+
+.badge-verified {
+  @apply bg-[#e6f5e9] text-[#26a042];
+}
+
+.badge-rarity {
+  @apply bg-[#f1effe] text-[#7e69ab];
+}
+
+.badge-category {
+  @apply bg-[#f3f4f6] text-[#4b5563];
+}
+
+.header-nav-link {
+  @apply font-medium uppercase text-gray-700 hover:text-[#26a042] transition-colors;
+}
+
+.header-nav-link.active {
+  @apply text-[#26a042];
+}
+
+.marketplace-header {
+  @apply bg-white border-b border-gray-200 shadow-sm sticky top-0 z-10;
+}
+
+.panini-style-layout {
+  @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+}
+
+.navbar-link {
+  @apply uppercase font-bold tracking-wider px-4 py-2 text-gray-800 hover:text-[#26a042] transition-colors;
+}
+
+.navbar-link.active {
+  @apply text-[#26a042] border-b-2 border-[#26a042];
+}
+
+.main-tabs {
+  @apply flex border-b border-gray-200 mb-6;
+}
+
+.main-tab {
+  @apply uppercase font-bold px-4 py-2 cursor-pointer border-b-2 border-transparent hover:border-[#26a042] hover:text-[#26a042];
+}
+
+.main-tab.active {
+  @apply border-[#26a042] text-[#26a042];
+}
+
+.verified-icon {
+  @apply text-[#26a042];
+}
+
+.rarity-badge {
+  @apply uppercase font-bold text-xs px-2 py-1 rounded;
+}
+
+.rarity-common {
+  @apply bg-gray-200 text-gray-800;
+}
+
+.rarity-uncommon {
+  @apply bg-[#4dc061] text-white;
+}
+
+.rarity-rare {
+  @apply bg-[#7e69ab] text-white;
+}
+
+.rarity-epic {
+  @apply bg-[#f97316] text-white;
+}
+
+.rarity-legendary {
+  @apply bg-[#f59e0b] text-white;
+}
+
+/* Filter sidebar styles */
+.filter-sidebar {
+  @apply bg-gray-50 p-4 rounded-lg;
+}
+
+.filter-heading {
+  @apply font-bold text-sm text-gray-500 uppercase mb-2;
+}
+
+.filter-option {
+  @apply flex items-center space-x-2 py-2 cursor-pointer hover:text-[#26a042];
+}
+
+.quick-buy-button {
+  @apply w-full bg-[#f97316] text-white font-bold py-2 rounded hover:bg-[#ea580c] transition-colors;
+}
+
+.make-offer-button {
+  @apply w-full border-2 border-gray-800 text-gray-800 font-bold py-2 rounded hover:bg-gray-100 transition-colors;
+}
+
+.blockchain-badge {
+  @apply flex items-center gap-2 bg-gray-100 px-3 py-1 rounded-full text-xs;
+}

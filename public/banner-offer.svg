@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="400" height="200" viewBox="0 0 400 200" fill="none">
+  <rect width="400" height="200" fill="#4285f4" opacity="0.1"/>
+  <path d="M150,50 L250,50 L270,80 L250,110 L150,110 L130,80 Z" fill="#4285f4" opacity="0.3" stroke="#4285f4" stroke-width="2" />
+  <text x="200" y="88" font-family="Arial" font-size="20" font-weight="bold" text-anchor="middle" fill="#4285f4">SPECIAL OFFER</text>
+  <circle cx="130" cy="150" r="30" fill="#fbbc05" opacity="0.4" stroke="#fbbc05" stroke-width="2" />
+  <circle cx="270" cy="150" r="30" fill="#fbbc05" opacity="0.4" stroke="#fbbc05" stroke-width="2" />
+  <path d="M20,100 C40,60 80,40 120,50 C160,60 200,30 250,40 C300,50 350,80 380,70" stroke="#4285f4" stroke-width="3" stroke-dasharray="5,5" />
+  <path d="M40,150 C80,130 150,170 200,140 C250,110 300,140 360,120" stroke="#4285f4" stroke-width="3" stroke-dasharray="5,5" />
+  <path d="M80,30 L100,50 L80,70" fill="none" stroke="#fbbc05" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
+  <path d="M320,130 L340,150 L320,170" fill="none" stroke="#fbbc05" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
+</svg> 
