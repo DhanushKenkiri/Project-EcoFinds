@@ -5,7 +5,7 @@ A modern eco-friendly marketplace with advanced features including multi-platfor
 ## Demo Video
 Check out our demo video to see EcoFinds in action:
 
-[![EcoFinds Demo](https://img.youtube.com/vi/iV4Wq-vGa7E/0.jpg)](https://youtu.be/iV4Wq-vGa7E)
+[![EcoFinds Demo](https://img.youtube.com/vi/YQ9eeEsboYQ/0.jpg)](https://youtu.be/YQ9eeEsboYQ)
 
 ## Technologies Used
 
@@ -101,7 +101,7 @@ For voice and image recognition:
 
 1. Clone the repository
 ```bash
-git clone https://github.com/yourusername/ecofinds.git
+git clone https://github.com/dhanushkenkir/ecofinds.git
 cd ecofinds
 ```
 
