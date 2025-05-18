@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -21,9 +21,20 @@ const ProductCard = ({ product, className = '', featured = false }: ProductCardP
   const [isLiked, setIsLiked] = useState(false);
   const [showAddedToCart, setShowAddedToCart] = useState(false);
   const [isTouchDevice, setIsTouchDevice] = useState(false);
+  const [windowWidth, setWindowWidth] = useState(window.innerWidth);
+  
+  // Handle window resize for responsive adjustments
+  useEffect(() => {
+    const handleResize = () => {
+      setWindowWidth(window.innerWidth);
+    };
+    
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
   
   // Detect touch device on first interaction
-  React.useEffect(() => {
+  useEffect(() => {
     const handleTouch = () => {
       setIsTouchDevice(true);
       window.removeEventListener('touchstart', handleTouch);
@@ -85,8 +96,9 @@ const ProductCard = ({ product, className = '', featured = false }: ProductCardP
     return diffDays;
   };
   
-  // Show overlay for touch devices or when hovered
-  const showOverlay = isHovered || isTouchDevice;
+  // Determine if overlay should be shown - always on small screens or when hovered on larger screens
+  const isMobile = windowWidth < 768;
+  const showOverlay = isMobile || isHovered || isTouchDevice;
   
   // Get product image with fallback logic
   const getImageSrc = () => {
@@ -106,36 +118,37 @@ const ProductCard = ({ product, className = '', featured = false }: ProductCardP
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.3 }}
-        whileHover={{ y: isTouchDevice ? 0 : -8 }}
+        whileHover={{ y: isTouchDevice || isMobile ? 0 : -8 }}
       >
         {/* Card image */}
-        <div className="relative overflow-hidden">
+        <div className="relative overflow-hidden rounded-lg">
           <div className={`${featured ? 'aspect-[4/3]' : 'aspect-square'} overflow-hidden`}>
             <motion.img 
               src={getImageSrc()} 
               alt={product.title}
               className="panini-card-image w-full h-full object-cover"
-              animate={{ scale: isHovered && !isTouchDevice ? 1.08 : 1 }}
+              animate={{ scale: (isHovered && !isTouchDevice && !isMobile) ? 1.08 : 1 }}
               transition={{ duration: 0.7, ease: [0.25, 0.1, 0.25, 1.0] }}
             />
           </div>
           
-          {/* Always visible on mobile, hover overlay on desktop */}
+          {/* Overlay - adjusted for mobile and touch devices */}
           <motion.div 
-            className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent flex flex-col justify-end p-3 md:p-4"
-            initial={{ opacity: isTouchDevice ? 0.8 : 0 }}
-            animate={{ opacity: showOverlay ? 1 : (isTouchDevice ? 0.8 : 0) }}
+            className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent 
+                      flex flex-col justify-end p-2 xs:p-3 md:p-4"
+            initial={{ opacity: isMobile || isTouchDevice ? 0.8 : 0 }}
+            animate={{ opacity: showOverlay ? 1 : (isMobile || isTouchDevice ? 0.8 : 0) }}
             transition={{ duration: 0.3 }}
           >
-            <div className="flex items-center justify-between mb-2 md:mb-3 text-white">
-              <div className="flex items-center gap-2 md:gap-3">
-                <div className="flex items-center gap-1 bg-black/40 backdrop-blur-md px-2 py-1 rounded-full">
-                  <Eye className="h-3 w-3" />
-                  <span className="text-xs font-medium">{product.views || 0}</span>
+            <div className="flex items-center justify-between mb-1 sm:mb-2 md:mb-3 text-white">
+              <div className="flex items-center gap-1 sm:gap-2 md:gap-3">
+                <div className="flex items-center gap-1 bg-black/40 backdrop-blur-md px-1.5 py-0.5 sm:px-2 sm:py-1 rounded-full">
+                  <Eye className="h-2.5 w-2.5 sm:h-3 sm:w-3" />
+                  <span className="text-[10px] sm:text-xs font-medium">{product.views || 0}</span>
                 </div>
-                <div className="flex items-center gap-1 bg-black/40 backdrop-blur-md px-2 py-1 rounded-full">
-                  <Heart className={`h-3 w-3 ${isLiked ? 'text-red-500' : ''}`} />
-                  <span className="text-xs font-medium">
+                <div className="flex items-center gap-1 bg-black/40 backdrop-blur-md px-1.5 py-0.5 sm:px-2 sm:py-1 rounded-full">
+                  <Heart className={`h-2.5 w-2.5 sm:h-3 sm:w-3 ${isLiked ? 'text-red-500' : ''}`} />
+                  <span className="text-[10px] sm:text-xs font-medium">
                     {isLiked ? (product.likes || 0) + 1 : (product.likes || 0)}
                   </span>
                 </div>
@@ -144,12 +157,12 @@ const ProductCard = ({ product, className = '', featured = false }: ProductCardP
               <AnimatePresence>
                 {showAddedToCart && (
                   <motion.div
-                    className="bg-primary text-white text-xs px-2 py-1 rounded-full flex items-center gap-1 absolute top-4 right-4"
+                    className="bg-primary text-white text-[10px] sm:text-xs px-1.5 py-0.5 sm:px-2 sm:py-1 rounded-full flex items-center gap-1 absolute top-3 sm:top-4 right-3 sm:right-4"
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: -10 }}
                   >
-                    <Check className="h-3 w-3" /> Added
+                    <Check className="h-2.5 w-2.5 sm:h-3 sm:w-3" /> Added
                   </motion.div>
                 )}
               </AnimatePresence>
@@ -159,129 +172,82 @@ const ProductCard = ({ product, className = '', featured = false }: ProductCardP
               <Button 
                 variant="outline"
                 size="sm" 
-                className="rounded-full bg-white/10 backdrop-blur-md border-white/20 text-white hover:bg-white/20 py-1 px-2.5 md:px-3 h-auto md:h-8 text-xs md:text-sm"
+                className="rounded-full bg-white/10 backdrop-blur-md border-white/20 text-white hover:bg-white/20 
+                          py-0.5 px-1.5 sm:py-1 sm:px-2.5 md:px-3 h-auto text-[10px] sm:text-xs md:text-sm"
                 onClick={handleLike}
+                aria-label={isLiked ? "Unlike product" : "Like product"}
               >
-                <Heart className={`h-3 w-3 mr-1 ${isLiked ? 'fill-current text-red-500' : ''}`} />
+                <Heart className={`h-2.5 w-2.5 sm:h-3 sm:w-3 mr-0.5 sm:mr-1 ${isLiked ? 'fill-current text-red-500' : ''}`} />
                 {isLiked ? 'Liked' : 'Like'}
               </Button>
               
               <Button 
                 size="sm" 
-                className="rounded-full bg-white text-black hover:bg-white/90 flex items-center gap-1 px-2.5 md:px-3 shadow-lg py-1 h-auto md:h-8 text-xs md:text-sm"
+                className="rounded-full bg-white text-black hover:bg-white/90 flex items-center gap-0.5 sm:gap-1 
+                          px-1.5 sm:px-2.5 md:px-3 shadow-lg py-0.5 sm:py-1 h-auto text-[10px] sm:text-xs md:text-sm"
                 onClick={handleAddToCart}
+                aria-label="Add to cart"
               >
                 {featured ? (
-                  <>Buy Now <ArrowRight className="h-3 w-3 ml-1" /></>
+                  <>Buy Now <ArrowRight className="h-2.5 w-2.5 sm:h-3 sm:w-3 ml-0.5 sm:ml-1" /></>
                 ) : (
-                  <><ShoppingCart className="h-3 w-3 mr-1" /> Buy</>
+                  <><ShoppingCart className="h-2.5 w-2.5 sm:h-3 sm:w-3 mr-0.5 sm:mr-1" /> Buy</>
                 )}
               </Button>
             </div>
           </motion.div>
           
-          {/* Card shine effect - only on non-touch devices */}
-          {!isTouchDevice && <div className="panini-card-shine hover-only"></div>}
+          {/* Card shine effect - only on non-touch, non-mobile devices */}
+          {!isTouchDevice && !isMobile && <div className="panini-card-shine hover-only"></div>}
           
-          {/* Badges */}
-          <div className="absolute top-2 md:top-3 right-2 md:right-3 flex flex-col gap-1.5 md:gap-2 items-end">
+          {/* Badges - adjusted positioning and size for smaller screens */}
+          <div className="absolute top-1.5 sm:top-2 md:top-3 right-1.5 sm:right-2 md:right-3 
+                        flex flex-col gap-1 sm:gap-1.5 md:gap-2 items-end">
             {product.verified && (
-              <Badge className="panini-badge-verified flex items-center gap-1 text-xs py-0.5 px-1.5">
-                <Check className="h-3 w-3" /> Verified
+              <Badge className="panini-badge-verified flex items-center gap-0.5 sm:gap-1 
+                             text-[10px] sm:text-xs py-0.5 px-1 sm:px-1.5">
+                <Check className="h-2.5 w-2.5 sm:h-3 sm:w-3" /> Verified
               </Badge>
             )}
             {product.condition && (
-              <Badge className={`${getRarityClass(product.condition)} flex items-center gap-1 text-xs py-0.5 px-1.5`}>
-                <Sparkles className="h-3 w-3" /> {product.condition}
+              <Badge className={`${getRarityClass(product.condition)} flex items-center gap-0.5 sm:gap-1 
+                             text-[10px] sm:text-xs py-0.5 px-1 sm:px-1.5`}>
+                <Sparkles className="h-2.5 w-2.5 sm:h-3 sm:w-3" /> {product.condition}
               </Badge>
             )}
             {daysSinceListing() <= 7 && (
-              <Badge className="panini-badge-new flex items-center gap-1 bg-secondary/90 text-xs py-0.5 px-1.5">
-                <Clock className="h-3 w-3" /> New
+              <Badge className="panini-badge-new flex items-center gap-0.5 sm:gap-1 bg-secondary/90 
+                             text-[10px] sm:text-xs py-0.5 px-1 sm:px-1.5">
+                <Clock className="h-2.5 w-2.5 sm:h-3 sm:w-3" /> New
               </Badge>
             )}
           </div>
-          
-          {/* Card number badge */}
-          <Badge className="panini-badge left-2 md:left-3 flex items-center gap-1 font-mono text-xs py-0.5 px-1.5">
-            {cardNumber}
-          </Badge>
         </div>
         
         {/* Card content */}
-        <div className="p-3 md:p-4">
-          <div className="flex justify-between items-center mb-1.5 md:mb-2">
-            <Badge variant="outline" className="text-xs capitalize bg-muted/30 py-0.5 px-1.5">
-              {product.category}
-            </Badge>
-            
+        <div className="p-2 sm:p-3">
+          {/* Product title with truncation */}
+          <h3 className="font-medium text-sm sm:text-base line-clamp-2 min-h-[2.5rem] sm:min-h-[3rem]">
+            {product.title}
+          </h3>
+          
+          {/* Price and rating */}
+          <div className="flex justify-between items-center mt-1 sm:mt-2">
+            <div className="text-sm sm:text-base font-bold">{formatPrice(product.price)}</div>
             {product.rating && (
-              <div className="flex items-center gap-1 text-xs">
-                <Star className="h-3.5 w-3.5 fill-current text-yellow-500 stroke-yellow-500" />
-                <span className="font-medium">{product.rating.toFixed(1)}</span>
+              <div className="flex items-center">
+                <Star className="h-3 w-3 sm:h-4 sm:w-4 fill-current text-yellow-400 stroke-yellow-400" />
+                <span className="ml-1 text-xs sm:text-sm">{product.rating}</span>
               </div>
             )}
           </div>
           
-          <h3 className="font-semibold text-sm md:text-base text-foreground line-clamp-1 mb-1 md:mb-1.5">{product.title}</h3>
-          
-          <div className="flex justify-between items-center">
-            <div>
-              <div className="font-bold text-base md:text-lg text-foreground">
-                {formatPrice(product.price)}
-              </div>
-              
-              {product.originalPrice && product.originalPrice > product.price && (
-                <div className="flex items-center gap-1 md:gap-2">
-                  <span className="text-xs md:text-sm line-through text-muted-foreground">
-                    {formatPrice(product.originalPrice)}
-                  </span>
-                  <span className="text-xs bg-accent/10 text-accent px-1.5 py-0.5 rounded-sm font-medium">
-                    {Math.round((1 - product.price / product.originalPrice) * 100)}% OFF
-                  </span>
-                </div>
-              )}
-            </div>
-            
-            {!featured && (
-              <motion.div whileTap={{ scale: 0.9 }}>
-                <Button 
-                  size="icon" 
-                  variant={isLiked ? "default" : "outline"}
-                  className={`rounded-full h-7 w-7 md:h-8 md:w-8 ${isLiked ? 'bg-red-500 hover:bg-red-600 border-red-500' : ''}`}
-                  onClick={handleLike}
-                >
-                  <Heart className={`h-3.5 w-3.5 md:h-4 md:w-4 ${isLiked ? 'fill-current' : ''}`} />
-                </Button>
-              </motion.div>
-            )}
+          {/* Category and card number - hidden on very small screens */}
+          <div className="flex items-center justify-between mt-1 sm:mt-2 text-[10px] sm:text-xs text-muted-foreground">
+            <span className="capitalize hidden xs:inline">{product.category || 'Uncategorized'}</span>
+            <span className="text-right">{cardNumber}</span>
           </div>
-          
-          {featured && (
-            <p className="mt-2 md:mt-3 text-muted-foreground line-clamp-2 text-xs md:text-sm">
-              {product.description}
-            </p>
-          )}
         </div>
-        
-        {/* Quick action buttons for featured cards */}
-        {featured && (
-          <div className="p-3 md:p-4 pt-0 flex gap-2">
-            <Button 
-              className="flex-1 btn-animated bg-primary hover:bg-primary/90 py-1.5 md:py-2 h-auto text-sm"
-              onClick={handleAddToCart}
-            >
-              <ShoppingCart className="h-3.5 w-3.5 md:h-4 md:w-4 mr-1.5 md:mr-2" /> Add to Cart
-            </Button>
-            
-            <Button
-              variant="outline"
-              className="flex-1 btn-animated py-1.5 md:py-2 h-auto text-sm"
-            >
-              <Eye className="h-3.5 w-3.5 md:h-4 md:w-4 mr-1.5 md:mr-2" /> Quick View
-            </Button>
-          </div>
-        )}
       </motion.div>
     </Link>
   );

@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { ShoppingCart, User, LogIn, Menu, Search, Wallet } from 'lucide-react';
+import { ShoppingCart, User, LogIn, Menu, Search, Wallet, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
-import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
+import { Sheet, SheetContent, SheetTrigger, SheetClose } from '@/components/ui/sheet';
 import { useAuth } from '@/context/AuthContext';
 import { useCart } from '@/context/CartContext';
 import Logo from '@/components/Logo';
@@ -26,6 +26,7 @@ const Header = ({ onSearch }: HeaderProps) => {
   const { isAuthenticated, user, logout, connectWallet } = useAuth();
   const { totalItems } = useCart();
   const [searchQuery, setSearchQuery] = useState('');
+  const [mobileSearchVisible, setMobileSearchVisible] = useState(false);
   const navigate = useNavigate();
 
   const handleSearch = (e: React.FormEvent) => {
@@ -35,6 +36,7 @@ const Header = ({ onSearch }: HeaderProps) => {
     } else {
       navigate(`/explore?search=${encodeURIComponent(searchQuery)}`);
     }
+    setMobileSearchVisible(false);
   };
 
   const renderAuthButtons = () => {
@@ -80,10 +82,12 @@ const Header = ({ onSearch }: HeaderProps) => {
 
   return (
     <header className="border-b sticky top-0 z-40 w-full bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="container mx-auto py-3 px-4">
+      <div className="container mx-auto py-2 sm:py-3 px-3 sm:px-4">
         <div className="flex items-center justify-between">
-          {/* Logo */}
-          <Logo size="medium" />
+          {/* Logo - smaller on mobile */}
+          <div className="flex-shrink-0">
+            <Logo size={window.innerWidth < 640 ? "small" : "medium"} />
+          </div>
 
           {/* Desktop Navigation */}
           <div className="hidden md:block">
@@ -132,7 +136,52 @@ const Header = ({ onSearch }: HeaderProps) => {
             </NavigationMenu>
           </div>
 
-          {/* Search Bar - Desktop */}
+          {/* Mobile Search Button (Visible when not expanded) */}
+          {!mobileSearchVisible && (
+            <Button 
+              variant="ghost" 
+              size="icon" 
+              className="md:hidden mx-1"
+              onClick={() => setMobileSearchVisible(true)}
+            >
+              <Search className="h-5 w-5" />
+            </Button>
+          )}
+
+          {/* Mobile Search Bar (Expandable) */}
+          {mobileSearchVisible && (
+            <form onSubmit={handleSearch} className="flex-1 flex md:hidden mx-2">
+              <div className="relative w-full flex items-center">
+                <Input
+                  type="text"
+                  placeholder="Search..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="w-full pr-8"
+                  autoFocus
+                />
+                <Button 
+                  type="submit" 
+                  size="icon" 
+                  className="absolute right-0"
+                  variant="ghost"
+                >
+                  <Search className="h-4 w-4" />
+                </Button>
+                <Button
+                  type="button"
+                  size="icon"
+                  variant="ghost"
+                  className="absolute right-8"
+                  onClick={() => setMobileSearchVisible(false)}
+                >
+                  <X className="h-4 w-4" />
+                </Button>
+              </div>
+            </form>
+          )}
+
+          {/* Desktop Search Bar */}
           <form onSubmit={handleSearch} className="hidden md:flex flex-1 mx-8 relative">
             <Input
               type="text"
@@ -151,89 +200,137 @@ const Header = ({ onSearch }: HeaderProps) => {
           </form>
 
           {/* Auth & Cart */}
-          <div className="flex items-center gap-2">
-            {renderAuthButtons()}
+          <div className="flex items-center gap-1 sm:gap-2">
+            {/* Only show auth buttons when mobile search is not visible */}
+            {!mobileSearchVisible && renderAuthButtons()}
             
+            {/* Always show cart button */}
             <Link to="/cart">
-              <Button variant="ghost" size="icon" className="relative">
+              <Button 
+                variant="ghost" 
+                size="icon" 
+                className="relative"
+                aria-label={`Shopping cart with ${totalItems} items`}
+              >
                 <ShoppingCart className="h-5 w-5" />
                 {totalItems > 0 && (
-                  <Badge className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center p-0 bg-accent">
+                  <Badge 
+                    className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center p-0 bg-accent"
+                    aria-label={`${totalItems} items in cart`}
+                  >
                     {totalItems}
                   </Badge>
                 )}
               </Button>
             </Link>
 
-            {/* Mobile Menu */}
-            <Sheet>
-              <SheetTrigger asChild>
-                <Button variant="ghost" size="icon" className="md:hidden">
-                  <Menu className="h-5 w-5" />
-                </Button>
-              </SheetTrigger>
-              <SheetContent>
-                <div className="flex flex-col gap-4 mt-8">
-                  <form onSubmit={handleSearch} className="relative">
-                    <Input
-                      type="text"
-                      placeholder="Search for items..."
-                      value={searchQuery}
-                      onChange={(e) => setSearchQuery(e.target.value)}
-                    />
-                    <Button 
-                      type="submit" 
-                      size="icon" 
-                      className="absolute right-0"
-                    >
-                      <Search className="h-4 w-4" />
-                    </Button>
-                  </form>
-                  <Link to="/explore" className="py-2">
-                    Explore Marketplace
-                  </Link>
-                  <Link to="/categories" className="py-2">
-                    Browse Categories
-                  </Link>
-                  <Link to="/sell" className="py-2">
-                    Sell Items
-                  </Link>
-                  {isAuthenticated ? (
-                    <>
-                      <Link to="/profile" className="py-2">
-                        My Profile
-                      </Link>
-                      <Link to="/my-listings" className="py-2">
-                        My Listings
-                      </Link>
-                      <Link to="/orders" className="py-2">
-                        Order History
-                      </Link>
-                      <Button
-                        variant="outline"
-                        className="w-full"
-                        onClick={() => connectWallet()}
-                      >
-                        <Wallet className="h-4 w-4 mr-1" /> 
-                        {user?.walletAddress ? `${user.walletAddress.slice(0, 6)}...${user.walletAddress.slice(-4)}` : 'Connect Wallet'}
-                      </Button>
-                      <Button className="w-full bg-eco" onClick={logout}>
-                        Logout
-                      </Button>
-                    </>
-                  ) : (
-                    <>
-                      <Link to="/login">
-                        <Button variant="outline" className="w-full">Login</Button>
-                      </Link>
-                      <Link to="/signup">
-                        <Button className="w-full bg-eco">Sign Up</Button>
-                      </Link>
-                    </>
-                  )}
-                </div>
-              </SheetContent>
-            </Sheet>
+            {/* Mobile Menu - Only show when search is not visible */}
+            {!mobileSearchVisible && (
+              <Sheet>
+                <SheetTrigger asChild>
+                  <Button variant="ghost" size="icon" className="md:hidden">
+                    <Menu className="h-5 w-5" />
+                  </Button>
+                </SheetTrigger>
+                <SheetContent side="right" className="w-[85vw] sm:w-[350px] pt-10">
+                  <div className="flex flex-col gap-6">
+                    <div className="flex justify-between items-center">
+                      <Logo size="small" />
+                      <SheetClose className="rounded-full hover:bg-accent/10 p-1">
+                        <X className="h-4 w-4" />
+                      </SheetClose>
+                    </div>
+
+                    <div className="border-b pb-4">
+                      <form onSubmit={handleSearch} className="relative">
+                        <Input
+                          type="text"
+                          placeholder="Search for items..."
+                          value={searchQuery}
+                          onChange={(e) => setSearchQuery(e.target.value)}
+                        />
+                        <Button 
+                          type="submit" 
+                          size="icon" 
+                          className="absolute right-0"
+                        >
+                          <Search className="h-4 w-4" />
+                        </Button>
+                      </form>
+                    </div>
+
+                    <div className="flex flex-col gap-4">
+                      <SheetClose asChild>
+                        <Link to="/explore" className="py-2 hover:text-eco">
+                          Explore Marketplace
+                        </Link>
+                      </SheetClose>
+                      <SheetClose asChild>
+                        <Link to="/categories" className="py-2 hover:text-eco">
+                          Browse Categories
+                        </Link>
+                      </SheetClose>
+                      <SheetClose asChild>
+                        <Link to="/sell" className="py-2 hover:text-eco">
+                          Sell Items
+                        </Link>
+                      </SheetClose>
+                    </div>
+
+                    <div className="flex flex-col gap-3 mt-2 pt-4 border-t">
+                      {isAuthenticated ? (
+                        <>
+                          <SheetClose asChild>
+                            <Link to="/profile" className="py-2 hover:text-eco">
+                              My Profile
+                            </Link>
+                          </SheetClose>
+                          <SheetClose asChild>
+                            <Link to="/my-listings" className="py-2 hover:text-eco">
+                              My Listings
+                            </Link>
+                          </SheetClose>
+                          <SheetClose asChild>
+                            <Link to="/orders" className="py-2 hover:text-eco">
+                              Order History
+                            </Link>
+                          </SheetClose>
+                          <SheetClose asChild>
+                            <Link to="/ai-features" className="py-2 hover:text-eco">
+                              AI Features
+                            </Link>
+                          </SheetClose>
+                          <Button 
+                            variant="outline" 
+                            className="w-full mt-2"
+                            onClick={() => connectWallet()}
+                          >
+                            <Wallet className="h-4 w-4 mr-1" /> 
+                            {user?.walletAddress ? `${user.walletAddress.slice(0, 6)}...${user.walletAddress.slice(-4)}` : 'Connect Wallet'}
+                          </Button>
+                          <Button className="w-full bg-eco" onClick={() => { logout(); }}>
+                            Logout
+                          </Button>
+                        </>
+                      ) : (
+                        <>
+                          <SheetClose asChild>
+                            <Link to="/login" className="w-full">
+                              <Button variant="outline" className="w-full">Login</Button>
+                            </Link>
+                          </SheetClose>
+                          <SheetClose asChild>
+                            <Link to="/signup" className="w-full">
+                              <Button className="w-full bg-eco">Sign Up</Button>
+                            </Link>
+                          </SheetClose>
+                        </>
+                      )}
+                    </div>
+                  </div>
+                </SheetContent>
+              </Sheet>
+            )}
           </div>
         </div>
       </div>

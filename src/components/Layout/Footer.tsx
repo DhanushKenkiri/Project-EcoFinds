@@ -5,8 +5,8 @@ const Footer = () => {
   return (
     <footer className="bg-gray-50 border-t mt-auto">
       <div className="container mx-auto px-4 py-6 md:py-8">
-        <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-6 md:gap-8">
-          <div className="flex flex-col space-y-3 md:space-y-4 col-span-2 sm:col-span-2 md:col-span-1">
+        <div className="grid grid-cols-2 gap-6 md:gap-8">
+          <div className="flex flex-col space-y-3 md:space-y-4 col-span-2 sm:col-span-1">
             <Link to="/" className="flex items-center gap-2">
               <div className="rounded-full p-1 bg-eco text-white">
                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-4 w-4 md:h-5 md:w-5">
@@ -44,34 +44,36 @@ const Footer = () => {
             </div>
           </div>
           
-          <div>
-            <h3 className="font-semibold text-base md:text-lg mb-2 md:mb-4">Marketplace</h3>
-            <ul className="space-y-1 md:space-y-2 text-sm md:text-base">
-              <li><Link to="/explore" className="text-gray-600 hover:text-eco">Explore</Link></li>
-              <li><Link to="/categories" className="text-gray-600 hover:text-eco">Categories</Link></li>
-              <li><Link to="/trending" className="text-gray-600 hover:text-eco">Trending Items</Link></li>
-              <li><Link to="/sell" className="text-gray-600 hover:text-eco">Sell an Item</Link></li>
-            </ul>
-          </div>
-          
-          <div>
-            <h3 className="font-semibold text-base md:text-lg mb-2 md:mb-4">Account</h3>
-            <ul className="space-y-1 md:space-y-2 text-sm md:text-base">
-              <li><Link to="/profile" className="text-gray-600 hover:text-eco">My Profile</Link></li>
-              <li><Link to="/my-listings" className="text-gray-600 hover:text-eco">My Listings</Link></li>
-              <li><Link to="/orders" className="text-gray-600 hover:text-eco">Order History</Link></li>
-              <li><Link to="/settings" className="text-gray-600 hover:text-eco">Settings</Link></li>
-            </ul>
-          </div>
-          
-          <div>
-            <h3 className="font-semibold text-base md:text-lg mb-2 md:mb-4">Help</h3>
-            <ul className="space-y-1 md:space-y-2 text-sm md:text-base">
-              <li><Link to="/faq" className="text-gray-600 hover:text-eco">FAQ</Link></li>
-              <li><Link to="/blockchain-info" className="text-gray-600 hover:text-eco">Blockchain Verification</Link></li>
-              <li><Link to="/contact" className="text-gray-600 hover:text-eco">Contact Us</Link></li>
-              <li><Link to="/about" className="text-gray-600 hover:text-eco">About EcoFinds</Link></li>
-            </ul>
+          <div className="col-span-2 sm:col-span-1 grid grid-cols-2 md:grid-cols-3 gap-6">
+            <div>
+              <h3 className="font-semibold text-sm sm:text-base md:text-lg mb-2 md:mb-4">Marketplace</h3>
+              <ul className="space-y-1 md:space-y-2 text-xs sm:text-sm md:text-base">
+                <li><Link to="/explore" className="text-gray-600 hover:text-eco">Explore</Link></li>
+                <li><Link to="/categories" className="text-gray-600 hover:text-eco">Categories</Link></li>
+                <li><Link to="/trending" className="text-gray-600 hover:text-eco">Trending Items</Link></li>
+                <li><Link to="/sell" className="text-gray-600 hover:text-eco">Sell an Item</Link></li>
+              </ul>
+            </div>
+            
+            <div>
+              <h3 className="font-semibold text-sm sm:text-base md:text-lg mb-2 md:mb-4">Account</h3>
+              <ul className="space-y-1 md:space-y-2 text-xs sm:text-sm md:text-base">
+                <li><Link to="/profile" className="text-gray-600 hover:text-eco">My Profile</Link></li>
+                <li><Link to="/my-listings" className="text-gray-600 hover:text-eco">My Listings</Link></li>
+                <li><Link to="/orders" className="text-gray-600 hover:text-eco">Order History</Link></li>
+                <li><Link to="/settings" className="text-gray-600 hover:text-eco">Settings</Link></li>
+              </ul>
+            </div>
+            
+            <div className="col-span-2 md:col-span-1 mt-4 md:mt-0">
+              <h3 className="font-semibold text-sm sm:text-base md:text-lg mb-2 md:mb-4">Help</h3>
+              <ul className="space-y-1 md:space-y-2 text-xs sm:text-sm md:text-base">
+                <li><Link to="/faq" className="text-gray-600 hover:text-eco">FAQ</Link></li>
+                <li><Link to="/blockchain-info" className="text-gray-600 hover:text-eco">Blockchain Verification</Link></li>
+                <li><Link to="/contact" className="text-gray-600 hover:text-eco">Contact Us</Link></li>
+                <li><Link to="/about" className="text-gray-600 hover:text-eco">About EcoFinds</Link></li>
+              </ul>
+            </div>
           </div>
         </div>
         
